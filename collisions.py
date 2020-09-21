@@ -10,27 +10,27 @@ def check_collisions(walls, player):
 def collision_top(collisions, player):
     for wall in collisions:
         if abs(wall.bottom - player.top) < collision_tollerance + 10:
-            print("top")
+            # print("top")
             return True
     return False
 
 def collision_left(collisions, player):
     for wall in collisions:
         if abs(wall.right - player.left) < collision_tollerance:
-            print("left")
+            # print("left")
             return True
     return False
 
 def collision_right(collisions, player):
     for wall in collisions:
         if abs(wall.left - player.right) < collision_tollerance:
-            print("right")
+            # print("right")
             return True
     return False
 
 def collision_bottom(collisions, player):
     for wall in collisions:
         if abs(wall.top - player.bottom) < collision_tollerance + 10:
-            print("bottom")
+            # print("bottom")
             return True
     return False

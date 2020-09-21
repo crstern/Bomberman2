@@ -1,103 +1,10 @@
-import pygame
 import sys
 from collisions import *
-
-def create_wall(i, j):
-    new_wall = wall_surface.get_rect(topleft=(i, j))
-    return new_wall
-
-def create_long_border(i, j):
-    new_border = long_border_surface.get_rect(topleft=(i, j))
-    return new_border
-
-def create_short_border(i, j):
-    new_border = short_border_surface.get_rect(topleft=(i, j))
-    return new_border
-
-def create_bomb(i, j):
-    new_bomb = bomb_surface.get_rect(center=(i, j))
-    return new_bomb
-
-def create_map(wall_map):
-    for i in range(len(wall_map)):
-        for j in range(len(wall_map[i])):
-            if wall_map[i][j] == 1:
-                wall_list.append(create_wall(j * 60, i * 65))
-            elif wall_map[i][j] == 2:
-                wall_list.append(create_long_border(j * 60, i * 65))
-            elif wall_map[i][j] == 3:
-                wall_list.append(create_short_border(j * 60, i * 65))
-
-def draw_map(screen, wall_list, bomb_list):
-    screen.blit(background_surface, (0, 0))
-    for wall in wall_list:
-        if wall.height == 585:
-            screen.blit(short_border_surface, wall)
-        elif wall.width == 60:
-            screen.blit(wall_surface, wall)
-        elif wall.width == 1260:
-            screen.blit(long_border_surface, wall)
-
-    for bomb in bomb_list:
-        screen.blit(bomb_surface, bomb)
+from helper import *
+from variables import *
 
 
-
-wall_list = []
-bomb_list = []
-
-wall_map = [
-        [2],
-        [3, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3],
-        [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-        [2]
-    ]
-
-
-
-pygame.init()
-screen = pygame.display.set_mode((1280, 720))
-clock = pygame.time.Clock()
-
-# Game variables
-frame_rate = 90
-speed_top = speed_bottom = speed_left = speed_right = speed = 2
-player_green_pos_x = 97
-player_green_pos_y = 97
-
-player_red_pos_x = 1100
-player_red_pos_y = 500
-
-wall_surface = pygame.image.load('assets/wall.png').convert()
-wall_surface = pygame.transform.scale(wall_surface, (60, 65))
-
-long_border_surface = pygame.image.load('assets/long_border.png').convert()
-long_border_surface = pygame.transform.scale(long_border_surface, (1260, 65))
-
-short_border_surface = pygame.image.load('assets/short_border.png').convert()
-
-player_green_screen = pygame.image.load('assets/player_green.png')
-player_green_screen = pygame.transform.scale(player_green_screen, (50, 55))
-
-player_red_screen = pygame.image.load('assets/player_red.png')
-player_red_screen = pygame.transform.scale(player_red_screen, (50, 55))
-
-bomb_surface = pygame.image.load('assets/bomb.png')
-bomb_surface = pygame.transform.scale(bomb_surface, (50, 55))
-
-background_surface = pygame.image.load('assets/Background_1280_720.png').convert()
-
-player_green_rect = player_green_screen.get_rect(center=(player_green_pos_x, player_green_pos_y))
-player_red_rect = player_red_screen.get_rect(center=(player_red_pos_x, player_red_pos_y))
-
-create_map(wall_map)
+create_map(wall_map, wall_list, wall_surface, long_border_surface, short_border_surface)
 
 key_s_up = True
 key_w_up = True
@@ -112,17 +19,27 @@ while True:
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_s:
+                # go down
                 key_s_up = False
             if event.key == pygame.K_w:
+                # go up
                 key_w_up = False
             if event.key == pygame.K_d:
+                # go right
                 key_d_up = False
             if event.key == pygame.K_a:
+                # go left
                 key_a_up = False
             if event.key == pygame.K_b:
+                # drop a bomb
                 pos_x = player_green_rect.centerx
                 pos_y = player_green_rect.centery
-                bomb_list.append(create_bomb(pos_x, pos_y))
+                bomb_list.append(create_bomb(bomb_surface, pos_x, pos_y))
+
+
+            if event.key == pygame.K_n:
+                # fire that shit
+                bomb_list.remove_all()
 
 
         if event.type == pygame.KEYUP:
@@ -167,12 +84,10 @@ while True:
 
     speed_top = speed_bottom = speed_left = speed_right = speed
 
-    draw_map(screen, wall_list, bomb_list)
+    draw_map(screen, wall_list, bomb_list, wall_surface, long_border_surface, short_border_surface, bomb_surface, background_surface)
 
     screen.blit(player_green_screen, player_green_rect)
     screen.blit(player_red_screen, player_red_rect)
 
     pygame.display.update()
     clock.tick(frame_rate)
-
-
